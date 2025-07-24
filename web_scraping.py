@@ -3,6 +3,10 @@ from bs4 import BeautifulSoup, Comment
 import pandas as pd
 import time
 
+pd.set_option('display.width', None)
+pd.set_option('display.max_columns', None)
+pd.set_option('display.max_rows', None)
+
 # list of league urls that contain all players from that league last season. Only leagues where strong players will translate to pl
 league_urls = ['https://fbref.com/en/comps/9/stats/Premier-League-Stats',
         'https://fbref.com/en/comps/12/stats/La-Liga-Stats',
@@ -18,7 +22,6 @@ league_urls = ['https://fbref.com/en/comps/9/stats/Premier-League-Stats',
 pl_players = 'https://fbref.com/en/comps/9/2025-2026/wages/2025-2026-Premier-League-Wages'
 
 def scrape_league_dfs(urls):
-
     for url in urls:
         response = requests.get(url)
         soup = BeautifulSoup(response.text, 'html.parser')
@@ -34,6 +37,20 @@ def scrape_league_dfs(urls):
         print(df.head())
         time.sleep(5)
 
+def scrape_pl_players(url):
+    # Use pandas to read all tables on the page
+    tables = pd.read_html(url)
 
-scrape_league_dfs(urls=league_urls)
+    # Display the first few rows of each to find the right one
+    df = tables[1]
+
+    # Clean column names
+    df.columns = [col[1] if isinstance(col, tuple) else col for col in df.columns]
+    df = df.dropna(how='all')  # Drop empty rows
+    print(df)
+    df.drop(['Rk', 'Notes'], inplace=True, axis=1)
+    df.to_csv(f'csvs/player_csvs/{url.split("/")[-1]}.csv', index=False)
+
+# scrape_league_dfs(urls=league_urls)
 # print(league_urls[0].split("/")[-1])
+scrape_pl_players(pl_players)
