@@ -53,7 +53,10 @@ def scrape_league_dfs(urls, path):
         table = table_soup.find('table', {'id': 'stats_standard'})
         df = pd.read_html(str(table), skiprows=1)[0]
         df.drop(['Rk', 'Nation', 'Squad', 'Matches'], inplace=True, axis=1)
-        df.to_csv(f'{path}{url.split("/")[-1]}.csv', index=False)
+        if url.split("/")[-1] == 'Premier-League-Stats':
+            df.to_csv(f'{path}2024-2025-Premier-League-Stats.csv', index=False)
+        else:
+            df.to_csv(f'{path}{url.split("/")[-1]}.csv', index=False)
         time.sleep(3)
 
 
@@ -101,8 +104,8 @@ def fetch_2425_pl_data():
     df.to_csv('csvs/fpl_csvs/2024-25_total_points.csv')
 
 
-scrape_df_with_pandas(urls=fpl_season_urls)
-fetch_2425_pl_data()
-scrape_league_dfs(urls=league_urls, path='csvs/league_csvs/')
+# scrape_df_with_pandas(urls=fpl_season_urls)
+# fetch_2425_pl_data()
+# scrape_league_dfs(urls=league_urls, path='csvs/league_csvs/')
 scrape_league_dfs(urls=pl_urls, path='csvs/pl_csvs/')
-scrape_pl_players(url=pl_players_url)
+# scrape_pl_players(url=pl_players_url)
