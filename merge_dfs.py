@@ -13,8 +13,8 @@ def remove_subheaders(path):
     df.drop(index=player_index, axis=0, inplace=True)
     return df
 
-# bring in all stats from the previous season for all premier league players, excluding those from weak leagues and limited if the player's name has changed in fbref (which is rare)
-def create_2526_player_list():
+# bring in all stats from the previous season for all premier league players, excluding those from weak leagues and limited if the player's name is inconsistent in fbref (which is rare)
+def create_2526_player_stat_list():
     player_list = remove_subheaders('csvs/player_csvs/2526_players.csv')
 
     csvs = os.listdir('csvs/league_csvs/')
@@ -45,4 +45,9 @@ def create_2526_player_list():
 
     pl_master.to_csv('csvs/player_csvs/2526_players_with_stats.csv', index=False)
 
-create_2526_player_list()
+# create_2526_player_stat_list()
+
+def add_target_to_stats():
+    start_years = [year for year in range(2017, 2025, 1)]
+    for year in start_years:
+        stats = pd.read_csv(f'csvs/pl_csvs/{year}-{year+1}-Premier-League-Stats.csv')
