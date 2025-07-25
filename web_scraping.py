@@ -2,6 +2,7 @@ import requests
 from bs4 import BeautifulSoup, Comment
 import pandas as pd
 import time
+import datetime
 
 pd.set_option('display.width', None)
 pd.set_option('display.max_columns', None)
@@ -16,16 +17,26 @@ league_urls = ['https://fbref.com/en/comps/9/stats/Premier-League-Stats',
                'https://fbref.com/en/comps/32/stats/Primeira-Liga-Stats',
                'https://fbref.com/en/comps/23/stats/Eredivisie-Stats',
                'https://fbref.com/en/comps/10/stats/Championship-Stats',
-               'https://fbref.com/en/comps/9/2020-2021/stats/2020-2021-Premier-League-Stats'
                ]
+
 pl_urls = ['https://fbref.com/en/comps/9/stats/Premier-League-Stats',
            'https://fbref.com/en/comps/9/2023-2024/stats/2023-2024-Premier-League-Stats',
            'https://fbref.com/en/comps/9/2022-2023/stats/2022-2023-Premier-League-Stats',
            'https://fbref.com/en/comps/9/2021-2022/stats/2021-2022-Premier-League-Stats',
+           'https://fbref.com/en/comps/9/2020-2021/stats/2020-2021-Premier-League-Stats',
            'https://fbref.com/en/comps/9/2019-2020/stats/2019-2020-Premier-League-Stats',
            'https://fbref.com/en/comps/9/2018-2019/stats/2018-2019-Premier-League-Stats',
            'https://fbref.com/en/comps/9/2017-2018/stats/2017-2018-Premier-League-Stats'
            ]
+
+bd_urls = ['https://fbref.com/en/comps/20/stats/Bundesliga-Stats']
+ll_urls = ['https://fbref.com/en/comps/12/stats/La-Liga-Stats']
+lo_urls = ['https://fbref.com/en/comps/13/stats/Ligue-1-Stats']
+sa_urls = ['https://fbref.com/en/comps/11/stats/Serie-A-Stats']
+pr_urls = ['https://fbref.com/en/comps/32/stats/Primeira-Liga-Stats']
+er_urls = ['https://fbref.com/en/comps/23/stats/Eredivisie-Stats']
+ch_urls = ['https://fbref.com/en/comps/10/stats/Championship-Stats']
+
 fpl_season_urls = ['https://www.premierfantasytools.com/2023-24-fpl-end-of-season-player-data/',
                    'https://www.premierfantasytools.com/2022-23-fpl-end-of-season-player-data/',
                    'https://www.premierfantasytools.com/2021-22-fpl-end-of-season-player-data/',
@@ -53,8 +64,9 @@ def scrape_league_dfs(urls, path):
         table = table_soup.find('table', {'id': 'stats_standard'})
         df = pd.read_html(str(table), skiprows=1)[0]
         df.drop(['Rk', 'Nation', 'Squad', 'Matches'], inplace=True, axis=1)
-        if url.split("/")[-1] == 'Premier-League-Stats':
-            df.to_csv(f'{path}2024-2025-Premier-League-Stats.csv', index=False)
+        # If the url doesn't contain the date, then add it in
+        if url.split("/")[-1][0] != '2':
+            df.to_csv(f'{path}2024-2025-{url.split("/")[-1]}.csv', index=False)
         else:
             df.to_csv(f'{path}{url.split("/")[-1]}.csv', index=False)
         time.sleep(3)
@@ -107,5 +119,5 @@ def fetch_2425_pl_data():
 # scrape_df_with_pandas(urls=fpl_season_urls)
 # fetch_2425_pl_data()
 # scrape_league_dfs(urls=league_urls, path='csvs/league_csvs/')
-scrape_league_dfs(urls=pl_urls, path='csvs/pl_csvs/')
+# scrape_league_dfs(urls=pl_urls, path='csvs/pl_csvs/')
 # scrape_pl_players(url=pl_players_url)
